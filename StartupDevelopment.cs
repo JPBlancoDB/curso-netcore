@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,9 +10,9 @@ using Microsoft.Extensions.Logging;
 
 namespace Curso
 {
-    public class Startup
+    public class StartupDevelopment
     {
-        public Startup(IHostingEnvironment env)
+        public StartupDevelopment(IHostingEnvironment env)
         {
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
@@ -27,7 +27,6 @@ namespace Curso
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            // Add framework services.
             services.AddMvc();
         }
 
@@ -36,6 +35,8 @@ namespace Curso
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
+
+            app.UseDeveloperExceptionPage();
 
             app.UseMvc();
         }

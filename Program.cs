@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.IO;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using System.Reflection;
 
 namespace Curso
 {
@@ -12,11 +10,16 @@ namespace Curso
     {
         public static void Main(string[] args)
         {
+            var config = new ConfigurationBuilder()  
+                .AddCommandLine(args)
+                .Build();
+
             var host = new WebHostBuilder()
+                .UseConfiguration(config)
                 .UseKestrel()
                 .UseContentRoot(Directory.GetCurrentDirectory())
                 .UseIISIntegration()
-                .UseStartup<Startup>()
+                .UseStartup(Assembly.GetEntryAssembly().FullName)
                 .Build();
 
             host.Run();
