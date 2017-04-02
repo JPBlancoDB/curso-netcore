@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Cors.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -29,6 +31,18 @@ namespace Curso
         {
             // Add framework services.
             services.AddMvc();
+
+            services.AddCors(options => 
+            {
+                options.AddPolicy("CorsGlobal", builder => builder.WithOrigins("http://ejemplo.com"));
+                options.AddPolicy("CorsDesarrollo", builder => builder.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
+                options.AddPolicy("CorsProduccion", builder => builder.WithOrigins("http://api.ejemploprod.com", "http://ejemploprod.com"));
+            });
+
+            services.Configure<MvcOptions>(options =>
+            {
+                options.Filters.Add(new CorsAuthorizationFilterFactory("CorsGlobal"));
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -36,6 +50,16 @@ namespace Curso
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
+
+            if(env.IsDevelopment())
+            {
+                app.UseCors("CorsDesarrollo");
+            }
+
+            if(env.IsProduction())
+            {
+                app.UseCors("CorsProduccion");
+            }
 
             app.UseMvc();
         }
