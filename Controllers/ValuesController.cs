@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Curso.Controllers
@@ -10,6 +11,7 @@ namespace Curso.Controllers
     public class ValuesController : Controller
     {
         // GET api/values
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public IEnumerable<string> Get()
         {
@@ -17,6 +19,7 @@ namespace Curso.Controllers
         }
 
         // GET api/values/5
+        [Authorize(Policy = "Equipo", Roles = "Usuario")]
         [HttpGet("{id}")]
         public string Get(int id)
         {
